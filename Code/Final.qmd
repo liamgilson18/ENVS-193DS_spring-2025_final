@@ -3,3 +3,37 @@ title: "Final"
 format: html
 ---
 
+https://github.com/liamgilson18/ENVS-193DS_spring-2025_final
+
+```{r}
+#read in code chunk
+#read in data here as well
+```
+
+# Problem 1
+
+#### a. Transparent Statistical Methods
+
+In part one, I conclude that they are doing a Pearsons correlation test, which is hinted at when it says, " We reject the null that there is no correlation..." meaning that there is evidence of correlation between head water distance and nitrogen load. I think its more likely to be a Pearsons correlation test because it makes logical sense that the closer we are to the headwater, the less nitrogen. So we would assume that there is a linear relationship, which there is. We also need the data to be continuous and numeric, which is true.
+
+In part two, I conclude that they are doing a One Way Analysis of Variance test, which is hinted at when it says "...between sources (urban land, atmospheric deposition, fertilizer, wastewater treatment, and grasslands)" which means there are more than two groups, with one factor (nitrogen load).
+
+#### b. More Information Needed
+
+One additional test that should be included is a Tukey HSD test, which is a type of Post Hoc. Tukeys HSD tells us what groups are actually different from each other. For example the Tukey HSD test might tell us there is a significant difference between nitrogen from urban sources and atmospheric depositon, and not a significant difference between nitrogen from fertilizer and grasslands.
+
+Another additional test what should be included is an effect size test (n^2^), which will explain how much the grouping variable explains the response. An effect size will tell us, for example, if most of the variance is coming from a specific source, such as fertilizer.
+
+#### c. suggestions for rewriting
+
+Part 1:
+
+We found a \[(strong, medium, weak) (negative,positive) correlation between headwater (km) and annual total nitrogen load (kg year^-1^) using Pearsons correlation test (Pearsons r= correlation coefficient), such that the distance from headwaters significantly predicts the nitrogen load. (t= t-value, df= degrees of freedom, p=0.03, 95% confidence interval: \[lower bound, upper bound\], r=correlation coffiecient)
+
+Part 2:
+
+We reject the null hypothesis for the one way ANOVA test, (one-way ANOVA, F(among groups diff, within groups df) = f value, p=0.02, ⍺=significance level) and find that there is no difference in the average nitrogen load (kg year^-1^) . There was a (small, medium, large) difference (n^2^ = effect size) between sources (urban land, atmospheric deposition, fertilizer, wastewater treatment, and grasslands). After finding the source means with a 95% confidence interval, we were able to conducted a Tukeys HSD we found significant differences in these sources (source1-source2, difference in means between groups, (lower, upper bound 95% CI, adjusted p-value)
+
+# Problem 2
+
+#### a.
