@@ -1,12 +1,22 @@
 ---
-title: "Final"
+title: "Final Assignment"
+name: Liam Gilson
+date: 6/9/2025
 format: html
 ---
 
 https://github.com/liamgilson18/ENVS-193DS_spring-2025_final
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 #read in code chunk
+
+library(tidyverse)
+library(dplyr)    # For data manipulation
+library(lubridate)  # For working with dates
+library(forcats)  # For working with factors
+library(tibble)   # For tibble formatting
+sst <- read.csv(here::here("data", "SST_update2023.csv"))
+
 #read in data here as well
 ```
 
@@ -36,4 +46,28 @@ We reject the null hypothesis for the one way ANOVA test, (one-way ANOVA, F(amon
 
 # Problem 2
 
-#### a.
+#### a. Cleaning and Summarizing
+
+```{r}
+# Clean and summarize SST data
+sst_clean <- sst |> 
+  # Step 1: Convert date column and extract year and month
+  mutate(
+    date = as.Date(date),  # Ensure date is in Date format
+    year = factor(year(date)),  # Extract year as a factor
+    month = factor(month(date, label = TRUE, abbr = TRUE), 
+                   levels = month.abb, ordered = TRUE)  # Ordered month factor
+  ) |>
+  # Step 2: Group by year and month
+  group_by(year, month) |>
+  # Step 3: Calculate the mean of 'temp' for each year-month
+  summarise(mean_monthly_sst = mean(temp, na.rm = TRUE), .groups = "drop") |>
+  # Step 4: Convert to tibble (optional)
+  as_tibble()
+
+# Show 5 random rows
+sst_clean |> slice_sample(n = 5)
+
+# Show structure of the tibble
+str(sst_clean)
+```
