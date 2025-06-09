@@ -1,2 +1,9 @@
 # ENVS-193DS_spring-2025_final
-This is the repository for Liam Gilson's Final assignment for ENVS193DS
+
+General information:
+
+Data and file overview
+
+Rendered output
+
+Link to the rendered .html in your “Rendered output” section.
