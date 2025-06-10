@@ -15,7 +15,9 @@ library(dplyr)    # load in dplyr
 library(lubridate)  #load in lubridate
 library(forcats)  # load in forcats
 library(tibble)   # load in tibble
-sst <- read.csv(here::here("data", "SST_update2023.csv")) #create object sst from data downloaded
+library(DHARMa)
+sst <- read.csv(here::here("data", "SST_update2023.csv")) #create object sst from data, problem 2
+nested_boxes <- read.csv(here::here("data", "occdist.csv"))
 ```
 
 # Problem 1
@@ -64,7 +66,7 @@ sst_clean |> slice_sample(n = 5) # Show 5 random rows
 str(sst_clean) # Show structure of the tibble in
 ```
 
-#### b.  
+#### b.
 
 ```{r}
 
@@ -109,4 +111,62 @@ ggplot(sst_filtered, aes(x = month, y = mean_monthly_sst, color = year, group = 
   coord_cartesian(clip = "off")
  
 #xtill need to annotate every code line!!!!!
+```
+
+# Problem 3
+
+#### a. Response Variable
+
+The 1's and 0's are a binary data, where 1 means that the specific bird did occupy the box more than once, and 0 if it did not. For each data entry, the accounted for birds are Swift Parrot, Common Starling, and Tree Martin.
+
+#### b. Purpose of Study
+
+The difference is that the Swift Parrot is a target species and the Common Sterling and Tree Martin are non-target species. The nested boxes are made to help the endangered Swift Parrot breed, without inviting rival species such as the Common Sterling and Tree Martin.
+
+#### c. Difference in "Seasons"
+
+The authors are talking about comparing breeding seasons between 2016 and 2019, where the breeding season is summertime, during mast flowering events. In 2016 these boxes are brand new, and by 2019 they are 3 years old and are established nested boxes.
+
+#### d. Table of Models
+
+| Model number | Season | Distance from Forest Edge | Predictor list |
+|----|----|----|----|
+| 1 |  |  | null model (no predictors) |
+| 2 | x | x | saturated model (season & distance) |
+| 3 | x |  | Season only model |
+| 4 |  | x | Distance only model |
+
+#### e. Run the Models
+
+```{r}
+# Load required packages
+# (install if not already installed)
+# install.packages("tidyverse")  # optional, for data wrangling
+library(tidyverse)
+
+# Step 0: Clean and prepare the data
+nested_boxes$occupied <- ifelse(nested_boxes$box.occupant == "empty" | is.na(nested_boxes$box.occupant), 0, 1)
+
+# Step 1: Null model
+mod1 <- glm(occupied ~ 1, family = binomial, data = nested_boxes)
+
+# Step 2: Saturated model (interaction)
+mod2 <- glm(occupied ~ season * edge.distance, family = binomial, data = nested_boxes)
+
+# Step 3: Additive model
+mod3 <- glm(occupied ~ edge.distance, family = binomial, data = nested_boxes)
+
+# Step 4: Season only model
+mod4 <- glm(occupied ~ season, family = binomial, data = nested_boxes)
+
+#ANNOTATE ME PLEAE!!!!
+```
+
+#### f. Check the Diagnostics
+
+```{r}
+plot(simulateResiduals(mod1), main = "Model 1: Null model")
+plot(simulateResiduals(mod2), main = "Model 2: Saturated model")
+plot(simulateResiduals(mod3), main = "Model 3: Distance to edge only")
+plot(simulateResiduals(mod4), main = "Model 4: Season only model")
 ```
