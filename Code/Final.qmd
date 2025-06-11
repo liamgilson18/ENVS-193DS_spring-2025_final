@@ -16,6 +16,8 @@ library(lubridate)  #load in lubridate
 library(forcats)  # load in forcats
 library(tibble)   # load in tibble
 library(DHARMa)
+library(MuMIn)
+library(ggeffects)
 sst <- read.csv(here::here("data", "SST_update2023.csv")) #create object sst from data, problem 2
 nested_boxes <- read.csv(here::here("data", "occdist.csv"))
 ```
@@ -70,47 +72,45 @@ str(sst_clean) # Show structure of the tibble in
 
 ```{r}
 
-# Filter for years 2018–2023
-sst_filtered <- sst_clean |> 
-  filter(as.numeric(as.character(year)) %in% 2018:2023)
+
+sst_filtered <- sst_clean |> # making object sst_filtered from sst_clean. pipe operator
+  filter(as.numeric(as.character(year)) %in% 2018:2023)# Filter for years 2018–2023
 
 blue_gradient <- c(
   "2018" = "#c6dbef",
   "2019" = "#9ecae1",
-  "2020" = "#6baed6",
+  "2020" = "#6baed6",#blue gradient.
   "2021" = "#4292c6",
   "2022" = "#2171b5",
   "2023" = "#084594"
 )
 
-# Plot
-ggplot(sst_filtered, aes(x = month, y = mean_monthly_sst, color = year, group = year)) +
-  geom_point(size = 2) +
-  geom_line(linewidth = 1) +
-  labs(
-    x = "Month",
-    y = "Mean monthly sea surface temperature (°C)",
-    color = "Year"
+
+ggplot(sst_filtered, aes(x = month, y = mean_monthly_sst, color = year, group = year)) + #skeleton of our plot made from sst_filtered. setting up axis labels and groups
+  geom_point(size = 2) + #making point size 2
+  geom_line(linewidth = 1) + #line width smaller than point so we can see the points
+  labs( #labs let us title things
+    x = "Month", #x axis title
+    y = "Mean monthly sea surface temperature (°C)", # y axis title
+    color = "Year" #legend title
   ) +
-  theme_minimal(base_size = 14) +
+  theme_minimal(base_size = 14) +#set theme minimal and font size
   theme(
-    panel.grid = element_blank(),
-    axis.ticks = element_blank(),
-    axis.line = element_blank(),
-    legend.position = c(0.05, 0.95),
-    legend.justification = c("left", "top"),
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 8),
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.title.position = "plot",
-    legend.background = element_rect(fill = "white", color = NA),
-    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
-    plot.margin = margin(10, 10, 10, 10)
+    panel.grid = element_blank(), # no grid
+    axis.ticks = element_blank(), #no axis ticks
+    axis.line = element_blank(), #no axis lines
+    legend.position = c(0.05, 0.95), #legend position in the top left
+    legend.justification = c("left", "top"), #legend position in the tiop left
+    legend.title = element_text(size = 10), # font size for legend title
+    legend.text = element_text(size = 8),#font size for legend text
+    plot.title = element_text(size = 14, face = "bold"),#bold 
+    plot.title.position = "plot", #irrelevant, we have no title
+    legend.background = element_rect(fill = "white", color = NA),#make legend float
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),#panel color and width
+    plot.margin = margin(10, 10, 10, 10)#set margins
   ) +
-  scale_color_manual(values = blue_gradient) +  # <- This must stay in the chain
+  scale_color_manual(values = blue_gradient) +  # gradient
   coord_cartesian(clip = "off")
- 
-#xtill need to annotate every code line!!!!!
 ```
 
 # Problem 3
@@ -133,40 +133,62 @@ The authors are talking about comparing breeding seasons between 2016 and 2019, 
 |----|----|----|----|
 | 1 |  |  | null model (no predictors) |
 | 2 | x | x | saturated model (season & distance) |
-| 3 | x |  | Season only model |
-| 4 |  | x | Distance only model |
+| 3 |  | x | Distance only model |
+| 4 | x |  | Season only model |
 
 #### e. Run the Models
 
 ```{r}
-# Load required packages
-# (install if not already installed)
-# install.packages("tidyverse")  # optional, for data wrangling
-library(tidyverse)
-
-# Step 0: Clean and prepare the data
+# Clean data: create binary occupancy variable
 nested_boxes$occupied <- ifelse(nested_boxes$box.occupant == "empty" | is.na(nested_boxes$box.occupant), 0, 1)
 
-# Step 1: Null model
-mod1 <- glm(occupied ~ 1, family = binomial, data = nested_boxes)
+# Convert 'season' to a factor to treat it as categorical (year categories)
+nested_boxes$season <- as.factor(nested_boxes$season)
 
-# Step 2: Saturated model (interaction)
-mod2 <- glm(occupied ~ season * edge.distance, family = binomial, data = nested_boxes)
+# Fit models with 'season' as a factor
+mod1 <- glm(occupied ~ 1, family = binomial, data = nested_boxes)                   # null model
+mod2 <- glm(occupied ~ season * edge.distance, family = binomial, data = nested_boxes)  # saturated model (interaction)
+mod3 <- glm(occupied ~ edge.distance, family = binomial, data = nested_boxes)         # distance only model
+mod4 <- glm(occupied ~ season, family = binomial, data = nested_boxes)                # season only model
 
-# Step 3: Additive model
-mod3 <- glm(occupied ~ edge.distance, family = binomial, data = nested_boxes)
-
-# Step 4: Season only model
-mod4 <- glm(occupied ~ season, family = binomial, data = nested_boxes)
-
-#ANNOTATE ME PLEAE!!!!
 ```
 
 #### f. Check the Diagnostics
 
 ```{r}
-plot(simulateResiduals(mod1), main = "Model 1: Null model")
-plot(simulateResiduals(mod2), main = "Model 2: Saturated model")
-plot(simulateResiduals(mod3), main = "Model 3: Distance to edge only")
-plot(simulateResiduals(mod4), main = "Model 4: Season only model")
+plot(simulateResiduals(mod1), main = "Model 1: Null model")#diagnosic test for mod1
+plot(simulateResiduals(mod2), main = "Model 2: Saturated model")#diagnosic test for mod2
+plot(simulateResiduals(mod3), main = "Model 3: Distance to edge only") #diagnosic test for mod3
+plot(simulateResiduals(mod4), main = "Model 4: Season only model") #diagnosic test for mod4
 ```
+
+#### g. Select the Best Model
+
+```{r}
+model_selection <- AICc(mod1, mod2, mod3, mod4) |> # Compare AIC values for all models
+arrange(AICc) #arrange them in descending order
+model_selection#View in terminal
+```
+
+The best model as determined by Akaike’s Information Criterion (AIC) is the model including both distance and mating season.
+
+#### h. Visualizing the Model Predictions
+
+```{r}
+
+
+
+
+```
+
+# Problem 4
+
+#### a. Comparing Visualizations
+
+My visualizations are different from each other significantly. Whereas my homework 2 visualization were pure data, in the form of a histogram and box plot, my homework 3 visualization had an artistic component, where I displayed each week of the quarter as a different slice of pizza. This way, its more pleasing visually, and you can see that each week i took a bigger or smaller 'slice' out of my savings account when I eat out.
+
+There definitely are similarities, In my affective visualization, I still used a version of a pie chart, which I see as a simple graph like the histogram and box plot. In this sense, what I was displaying was very simple, and modeled after elementary graphs.
+
+In my first visualization, I can see that when I eat out, I tend to spend much more money when I go to Deja Vu. In my second visualization, I can see a trend in my average spending for the "snack category, which is skewed left, with the median pushed to the left of the entire range, hinting that when I get snacks, I sometimes spend a lot, but usually don't. In my third visualization I can see that the general trend over all the weeks of the spring quarter, that I did in fact spend more money in the later weeks of the quarter.
+
+My feedback from week 9 was to make the separation of the pieces of pizza cleaner, because originally it was just lines generated in google drawings, and my second was to make the slices of pie accurate to my data, which it originally was not. I implemented the second change, for which i made a pie chart of my data, and then projected those lines onto my picture of pizza.
