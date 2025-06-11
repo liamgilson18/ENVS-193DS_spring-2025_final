@@ -21,5 +21,3 @@ Link to the rendered .html in your “Rendered output” section.
 #### Rendered Output
 
 liamgilson18.github.io/ENVS-193DS_spring-2025_final/Code/Final.html
-
-\
