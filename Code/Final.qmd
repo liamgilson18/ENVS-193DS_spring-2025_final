@@ -1,6 +1,6 @@
 ---
 title: "Final Assignment"
-name: Liam Gilson
+author: "Liam Gilson"
 date: 6/11/2025
 format: 
   html: 
@@ -10,7 +10,7 @@ warning: false # hide all warnings
 editor: visual
 ---
 
-https://github.com/liamgilson18/ENVS-193DS_spring-2025_final
+[https://github.com/liamgilson18/ENVS-193DS_spring-2025_final](https://github.com/liamgilson18)
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse) #load in tidyverse
