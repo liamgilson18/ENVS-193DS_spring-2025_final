@@ -1,29 +1,29 @@
 ---
 title: "Final Assignment"
 name: Liam Gilson
-date: 6/9/2025
-format:
-  html:
-    toc: true
-    toc_float: true
+date: 6/11/2025
+format: 
+  html: 
+    toc: true # display table of contents
+message: false # hide all messages
+warning: false # hide all warnings
+editor: visual
 ---
 
 https://github.com/liamgilson18/ENVS-193DS_spring-2025_final
 
 ```{r, message=FALSE, warning=FALSE}
-#read in code chunk
-
 library(tidyverse) #load in tidyverse
 library(dplyr)    # load in dplyr
 library(lubridate)  #load in lubridate
 library(forcats)  # load in forcats
 library(tibble)   # load in tibble
-library(DHARMa)
-library(MuMIn)
-library(ggeffects)
-library(janitor)
-sst <- read.csv(here::here("data", "SST_update2023.csv")) #create object sst from data, problem 2
-nested_boxes <- read.csv(here::here("data", "occdist.csv"))
+library(DHARMa) #load in DHARMa
+library(MuMIn) #load in MuMIn
+library(ggeffects) #load in ggeffects
+library(janitor) #load in janitor
+sst <- read.csv(here::here("data", "SST_update2023.csv")) #create initial object sst from data, problem 2
+nested_boxes <- read.csv(here::here("data", "occdist.csv")) #create initial object nested boxesfor problem 3
 ```
 
 # Problem 1
@@ -40,7 +40,7 @@ One additional test that should be included is a Tukey HSD test, which is a type
 
 Another additional test what should be included is an effect size test (n^2^), which will explain how much the grouping variable explains the response. An effect size will tell us, for example, if most of the variance is coming from a specific source, such as fertilizer.
 
-#### c. suggestions for rewriting
+#### c. Suggestions for rewriting
 
 Part 1:
 
@@ -75,8 +75,6 @@ str(sst_clean) # Show structure of the tibble in
 #### b.
 
 ```{r}
-
-
 sst_filtered <- sst_clean |> # making object sst_filtered from sst_clean. pipe operator
   filter(as.numeric(as.character(year)) %in% 2018:2023)# Filter for years 2018–2023
 
@@ -213,11 +211,11 @@ ggplot(sp_preds_clean, aes(x = x,   # create plot and define axis as probability
      fill = "Season" # set legend title
    ) +
    scale_color_manual(values = c(  # set colors for lines and points
-    "2016" = "#E57373",     #light red
-    "2019" = "#87CEEB")) +  #light blue
+    "2016" = "#EA80B0",     #light pink
+    "2019" = "#B39DDB")) +  #light purple
    scale_fill_manual(values = c(  # set colors for CI ribbon
-    "2016" = "#E57373",     #light red
-    "2019" = "#87CEEB")) +  #light blue
+    "2016" = "#EA80B0",     #light pink
+    "2019" = "#B39DDB")) +  #light purple
    theme_bw() + # set theme
    theme(  # remove background and panel grids
      panel.background = element_blank(),
@@ -227,7 +225,7 @@ ggplot(sp_preds_clean, aes(x = x,   # create plot and define axis as probability
 
 #### i.
 
-\[Figure 1\]: **Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest** - This figure illustrates the predicted probability of Swift Parrot nest box occupancy, based on a generalized linear model. The red and blue lines represent the predicted probability that a Parrot will occupy a box for the 2016 and 2019 seasons, respectively, across different distances from the forest edge. The shaded ribbons show a 95% confidence interval for each prediction line, that being red for 2016, blue for 2019. The plot reveals a negative, nonlinear relationship between distance from the forest edge and occupancy probability, with 2016 showing consistently higher predicted occupancy than 2019. Data from Stojanovic et al. (2021), Dryad: https://doi.org/10.5061/dryad.83bk3j9sb.
+\[Figure 1\]: **Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest** - This figure illustrates the predicted probability of Swift Parrot nest box occupancy, based on a generalized linear model. The pink and purple lines represent the predicted probability that a Parrot will occupy a box for the 2016 and 2019 seasons, respectively, across different distances from the forest edge. The shaded ribbons show a 95% confidence interval for each prediction line, that being pink for 2016, purple for 2019. The plot reveals a negative, nonlinear relationship between distance from the forest edge and occupancy probability, with 2016 showing consistently higher predicted occupancy than 2019. Data from Stojanovic et al. (2021), Dryad: https://doi.org/10.5061/dryad.83bk3j9sb.
 
 #### j. Calculate Model Predictions
 
