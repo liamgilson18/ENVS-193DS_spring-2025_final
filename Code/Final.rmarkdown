@@ -8,7 +8,11 @@ format:
     toc_float: true
 ---
 
+
+
 https://github.com/liamgilson18/ENVS-193DS_spring-2025_final
+
+
 
 ```{r, message=FALSE, warning=FALSE}
 #read in code chunk
@@ -25,6 +29,8 @@ library(janitor)
 sst <- read.csv(here::here("data", "SST_update2023.csv")) #create object sst from data, problem 2
 nested_boxes <- read.csv(here::here("data", "occdist.csv"))
 ```
+
+
 
 # Problem 1
 
@@ -54,6 +60,8 @@ We reject the null hypothesis for the one way ANOVA test, (one-way ANOVA, F(amon
 
 #### a. Cleaning and Summarizing
 
+
+
 ```{r}
 
 sst_clean <- sst |> #cleaning sst, creating object sst_clean
@@ -72,7 +80,11 @@ sst_clean |> slice_sample(n = 5) # Show 5 random rows
 str(sst_clean) # Show structure of the tibble in
 ```
 
+
+
 #### b.
+
+
 
 ```{r}
 
@@ -117,6 +129,8 @@ ggplot(sst_filtered, aes(x = month, y = mean_monthly_sst, color = year, group = 
   coord_cartesian(clip = "off")
 ```
 
+
+
 # Problem 3
 
 #### a. Response Variable
@@ -142,6 +156,8 @@ The authors are talking about comparing breeding seasons between 2016 and 2019, 
 
 #### e. Run the Models
 
+
+
 ```{r}
 clean_nest_boxes <- nested_boxes |> #cleaning nested_boxes
   clean_names() |> # clean column names
@@ -166,7 +182,11 @@ model4 <- glm(sp ~ edge_distance, # use only edge distance predictor
 
 ```
 
+
+
 #### f. Check the Diagnostics
+
+
 
 ```{r}
 plot(simulateResiduals(model1)) # diagnostics for null model
@@ -176,7 +196,11 @@ plot(simulateResiduals(model4)) # diagnostics for forest distance only model
 
 ```
 
+
+
 #### g. Select the Best Model
+
+
 
 ```{r}
 model_selection <- AICc(model1, model2, model3, model4) |> # Compare AIC values
@@ -184,9 +208,13 @@ arrange(AICc) #arrange them in descending order
 model_selection#View in terminal
 ```
 
+
+
 The best model as determined by Akaike’s Information Criterion (AIC) is the model including both distance and mating season.
 
 #### h. Visualizing the Model Predictions
+
+
 
 ```{r}
 sp_preds <- ggpredict(
@@ -226,14 +254,20 @@ ggplot(sp_preds_clean, aes(x = x,   # create plot and define axis as probability
    )
 ```
 
+
+
 #### i.
 
 \[Figure 1\]: **Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest**- This figure illustrates the predicted probability of Swift Parrot nest box occupancy, based on a generalized linear model. The red and blue lines represent the predicted probability that a Parrot will occupy a box for the 2016 and 2019 seasons, respectively, across different distances from the forest edge. The shaded ribbons show a 95% confidence interval for each prediction line, that being red for 2016, blue for 2019. The plot reveals a negative, nonlinear relationship between distance from the forest edge and occupancy probability, with 2016 showing consistently higher predicted occupancy than 2019. Data from Stojanovic et al. (2021), Dryad: https://doi.org/10.5061/dryad.83bk3j9sb.
 
 
+
+
 ```{r}
 
 ```
+
+
 
 # Problem 4
 
@@ -246,3 +280,4 @@ There definitely are similarities, In my affective visualization, I still used a
 In my first visualization, I can see that when I eat out, I tend to spend much more money when I go to Deja Vu. In my second visualization, I can see a trend in my average spending for the "snack category, which is skewed left, with the median pushed to the left of the entire range, hinting that when I get snacks, I sometimes spend a lot, but usually don't. In my third visualization I can see that the general trend over all the weeks of the spring quarter, that I did in fact spend more money in the later weeks of the quarter.
 
 My feedback from week 9 was to make the separation of the pieces of pizza cleaner, because originally it was just lines generated in google drawings, and my second was to make the slices of pie accurate to my data, which it originally was not. I implemented the second change, for which i made a pie chart of my data, and then projected those lines onto my picture of pizza.
+
