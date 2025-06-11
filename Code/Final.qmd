@@ -189,18 +189,17 @@ The best model as determined by Akaike’s Information Criterion (AIC) is the mo
 #### h. Visualizing the Model Predictions
 
 ```{r}
-sp_preds <- ggpredict(
+sp_preds <- ggpredict( #running ggpredict
   model2,     # choose which model to use
-  terms = c("edge_distance","season")) # select predictors
-sp_preds_clean <- sp_preds |> # clean column names
-  clean_names() |> 
-  rename(season = group)
+  terms = c("edge_distance","season")) # select both distance and season as predictors
+sp_preds_clean <- sp_preds |> #new object sp_preds_clean from sp_preds
+  clean_names() |> # clean column names
+  rename(season = group) #reneame 
 
-# code for plot creation
 ggplot(sp_preds_clean, aes(x = x,   # create plot and define axis as probability and distance from forest edge
-                     y = predicted * 100,  # y axis is predicted probability x 100 (% format)
-                     color = season, # color by group
-                     fill = season)) + # fill color by group
+                     y = predicted * 100,  # y axis is predicted probability x 100 for percentage
+                     color = season, # color by year
+                     fill = season)) + # fill color by year
    geom_ribbon(alpha = 0.2, color = NA,
               aes(ymin = conf_low * 100, # confidence interval boundary, adjusted for %
                   ymax = conf_high * 100, # confidence interval boundary, adjusted for %
@@ -214,11 +213,11 @@ ggplot(sp_preds_clean, aes(x = x,   # create plot and define axis as probability
      fill = "Season" # set legend title
    ) +
    scale_color_manual(values = c(  # set colors for lines and points
-    "2016" = "#E57373",
-    "2019" = "#87CEEB")) + 
+    "2016" = "#E57373",     #light red
+    "2019" = "#87CEEB")) +  #light blue
    scale_fill_manual(values = c(  # set colors for CI ribbon
-    "2016" = "#E57373",
-    "2019" = "#87CEEB")) + 
+    "2016" = "#E57373",     #light red
+    "2019" = "#87CEEB")) +  #light blue
    theme_bw() + # set theme
    theme(  # remove background and panel grids
      panel.background = element_blank(),
@@ -228,12 +227,21 @@ ggplot(sp_preds_clean, aes(x = x,   # create plot and define axis as probability
 
 #### i.
 
-\[Figure 1\]: **Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest**- This figure illustrates the predicted probability of Swift Parrot nest box occupancy, based on a generalized linear model. The red and blue lines represent the predicted probability that a Parrot will occupy a box for the 2016 and 2019 seasons, respectively, across different distances from the forest edge. The shaded ribbons show a 95% confidence interval for each prediction line, that being red for 2016, blue for 2019. The plot reveals a negative, nonlinear relationship between distance from the forest edge and occupancy probability, with 2016 showing consistently higher predicted occupancy than 2019. Data from Stojanovic et al. (2021), Dryad: https://doi.org/10.5061/dryad.83bk3j9sb.
+\[Figure 1\]: **Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest** - This figure illustrates the predicted probability of Swift Parrot nest box occupancy, based on a generalized linear model. The red and blue lines represent the predicted probability that a Parrot will occupy a box for the 2016 and 2019 seasons, respectively, across different distances from the forest edge. The shaded ribbons show a 95% confidence interval for each prediction line, that being red for 2016, blue for 2019. The plot reveals a negative, nonlinear relationship between distance from the forest edge and occupancy probability, with 2016 showing consistently higher predicted occupancy than 2019. Data from Stojanovic et al. (2021), Dryad: https://doi.org/10.5061/dryad.83bk3j9sb.
 
+#### j. Calculate Model Predictions
 
 ```{r}
-
+sp_preds_j <- ggpredict(  #run predicted values
+  model2,                 #from model 2
+  terms = c("edge_distance [0,900]", "season") #at 0 distance and 900 distance
+)
+print(sp_preds_j) # show output on render
 ```
+
+#### k. Interpret your results
+
+In 2016, shortly after new nest boxes were installed, the probability of Swift Parrot occupancy was estimated at 48% (95% CI: 33%–66%) at the forest edge (0 meters) and 12% (95% CI: 6%–24%) at 900 meters into the forest. By 2019, those probabilities had declined to 30% (95% CI: 18%–44%) at the edge and 6% (95% CI: 3%–13%) deeper in the forest. This suggests a general decline in occupancy over time at both distances. Figure 1 illustrates a negative nonlinear relationship between distance from the forest edge and Swift Parrot occupancy—parrots are less likely to use boxes farther from the edge. A similar pattern was observed for common starlings, while tree martins showed the opposite trend, with occupancy increasing further into the forest. The decline in Swift Parrot use over time may be partly due to increased competition from starlings, which tend to occupy boxes more in later years. Additionally, the rise in tree martin occupancy deeper in the forest may explain the lower availability of boxes for Swift Parrots in those areas.
 
 # Problem 4
 

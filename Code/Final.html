@@ -171,11 +171,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 5 × 3
   year  month mean_monthly_sst
   &lt;fct&gt; &lt;ord&gt;            &lt;dbl&gt;
-1 2006  Jun               15.3
-2 1987  Nov               16.8
-3 1999  Nov               15.2
-4 2003  Sep               16.4
-5 2007  Sep               16.4</code></pre>
+1 1992  Nov               17.2
+2 1990  Sep               17.6
+3 1989  Nov               16.1
+4 1996  Oct               16.2
+5 1989  Jul               16.1</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sst_clean) <span class="co"># Show structure of the tibble in</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -376,45 +376,44 @@ model1  1 238.8318</code></pre>
 <section id="h.-visualizing-the-model-predictions" class="level4">
 <h4 class="anchored" data-anchor-id="h.-visualizing-the-model-predictions">h. Visualizing the Model Predictions</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sp_preds <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(</span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sp_preds <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>( <span class="co">#running ggpredict</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  model2,     <span class="co"># choose which model to use</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">terms =</span> <span class="fu">c</span>(<span class="st">"edge_distance"</span>,<span class="st">"season"</span>)) <span class="co"># select predictors</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">terms =</span> <span class="fu">c</span>(<span class="st">"edge_distance"</span>,<span class="st">"season"</span>)) <span class="co"># select both distance and season as predictors</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Data were 'prettified'. Consider using `terms="edge_distance [all]"` to
   get smooth plots.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sp_preds_clean <span class="ot">&lt;-</span> sp_preds <span class="sc">|&gt;</span> <span class="co"># clean column names</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">season =</span> group)</span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sp_preds_clean <span class="ot">&lt;-</span> sp_preds <span class="sc">|&gt;</span> <span class="co">#new object sp_preds_clean from sp_preds</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">|&gt;</span> <span class="co"># clean column names</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">season =</span> group) <span class="co">#reneame </span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># code for plot creation</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sp_preds_clean, <span class="fu">aes</span>(<span class="at">x =</span> x,   <span class="co"># create plot and define axis as probability and distance from forest edge</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> predicted <span class="sc">*</span> <span class="dv">100</span>,  <span class="co"># y axis is predicted probability x 100 (% format)</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> season, <span class="co"># color by group</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fill =</span> season)) <span class="sc">+</span> <span class="co"># fill color by group</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_ribbon</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="cn">NA</span>,</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">ymin =</span> conf_low <span class="sc">*</span> <span class="dv">100</span>, <span class="co"># confidence interval boundary, adjusted for %</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> conf_high <span class="sc">*</span> <span class="dv">100</span>, <span class="co"># confidence interval boundary, adjusted for %</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">fill =</span> season</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>                  )) <span class="sc">+</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)  <span class="sc">+</span> <span class="co"># add line for predictions</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Distance From the Forest Edge (meters)"</span>, <span class="co"># set x axis</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Probability of Swift Parrot Occupying Nest Box (%)"</span>, <span class="co"># set y axis</span></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">color =</span> <span class="st">"Season"</span>, <span class="co"># set legend title</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">fill =</span> <span class="st">"Season"</span> <span class="co"># set legend title</span></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(  <span class="co"># set colors for lines and points</span></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2016"</span> <span class="ot">=</span> <span class="st">"#E57373"</span>,</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2019"</span> <span class="ot">=</span> <span class="st">"#87CEEB"</span>)) <span class="sc">+</span> </span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(  <span class="co"># set colors for CI ribbon</span></span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2016"</span> <span class="ot">=</span> <span class="st">"#E57373"</span>,</span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2019"</span> <span class="ot">=</span> <span class="st">"#87CEEB"</span>)) <span class="sc">+</span> </span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="co"># set theme</span></span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(  <span class="co"># remove background and panel grids</span></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid =</span> <span class="fu">element_blank</span>()</span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>   )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sp_preds_clean, <span class="fu">aes</span>(<span class="at">x =</span> x,   <span class="co"># create plot and define axis as probability and distance from forest edge</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> predicted <span class="sc">*</span> <span class="dv">100</span>,  <span class="co"># y axis is predicted probability x 100 for percentage</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> season, <span class="co"># color by year</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fill =</span> season)) <span class="sc">+</span> <span class="co"># fill color by year</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_ribbon</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="cn">NA</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">ymin =</span> conf_low <span class="sc">*</span> <span class="dv">100</span>, <span class="co"># confidence interval boundary, adjusted for %</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ymax =</span> conf_high <span class="sc">*</span> <span class="dv">100</span>, <span class="co"># confidence interval boundary, adjusted for %</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">fill =</span> season</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>                  )) <span class="sc">+</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)  <span class="sc">+</span> <span class="co"># add line for predictions</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">labs</span>(</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">x =</span> <span class="st">"Distance From the Forest Edge (meters)"</span>, <span class="co"># set x axis</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> <span class="st">"Probability of Swift Parrot Occupying Nest Box (%)"</span>, <span class="co"># set y axis</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">color =</span> <span class="st">"Season"</span>, <span class="co"># set legend title</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">fill =</span> <span class="st">"Season"</span> <span class="co"># set legend title</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>   ) <span class="sc">+</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(  <span class="co"># set colors for lines and points</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2016"</span> <span class="ot">=</span> <span class="st">"#E57373"</span>,     <span class="co">#light red</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2019"</span> <span class="ot">=</span> <span class="st">"#87CEEB"</span>)) <span class="sc">+</span>  <span class="co">#light blue</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(  <span class="co"># set colors for CI ribbon</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2016"</span> <span class="ot">=</span> <span class="st">"#E57373"</span>,     <span class="co">#light red</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2019"</span> <span class="ot">=</span> <span class="st">"#87CEEB"</span>)) <span class="sc">+</span>  <span class="co">#light blue</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="co"># set theme</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(  <span class="co"># remove background and panel grids</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>     <span class="at">panel.grid =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>   )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ℹ Please use `linewidth` instead.</code></pre>
@@ -430,7 +429,38 @@ model1  1 238.8318</code></pre>
 </section>
 <section id="i." class="level4">
 <h4 class="anchored" data-anchor-id="i.">i.</h4>
-<p>[Figure 1]: <strong>Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest</strong>-</p>
+<p>[Figure 1]: <strong>Swift Parrot box occupancy decreases with seasonal progression, and increases with distance from edge of forest</strong> - This figure illustrates the predicted probability of Swift Parrot nest box occupancy, based on a generalized linear model. The red and blue lines represent the predicted probability that a Parrot will occupy a box for the 2016 and 2019 seasons, respectively, across different distances from the forest edge. The shaded ribbons show a 95% confidence interval for each prediction line, that being red for 2016, blue for 2019. The plot reveals a negative, nonlinear relationship between distance from the forest edge and occupancy probability, with 2016 showing consistently higher predicted occupancy than 2019. Data from Stojanovic et al.&nbsp;(2021), Dryad: https://doi.org/10.5061/dryad.83bk3j9sb.</p>
+</section>
+<section id="j.-calculate-model-predictions" class="level4">
+<h4 class="anchored" data-anchor-id="j.-calculate-model-predictions">j. Calculate Model Predictions</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sp_preds_j <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(  <span class="co">#run predicted values</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  model2,                 <span class="co">#from model 2</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">terms =</span> <span class="fu">c</span>(<span class="st">"edge_distance [0,900]"</span>, <span class="st">"season"</span>) <span class="co">#at 0 distance and 900 distance</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sp_preds_j) <span class="co"># show output on render</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Predicted probabilities of sp
+
+season: 2016
+
+edge_distance | Predicted |     95% CI
+--------------------------------------
+            0 |      0.48 | 0.33, 0.64
+          900 |      0.12 | 0.06, 0.24
+
+season: 2019
+
+edge_distance | Predicted |     95% CI
+--------------------------------------
+            0 |      0.30 | 0.18, 0.44
+          900 |      0.06 | 0.03, 0.13</code></pre>
+</div>
+</div>
+</section>
+<section id="k.-interpret-your-results" class="level4">
+<h4 class="anchored" data-anchor-id="k.-interpret-your-results">k. Interpret your results</h4>
+<p>In 2016, shortly after new nest boxes were installed, the probability of Swift Parrot occupancy was estimated at 48% (95% CI: 33%–66%) at the forest edge (0 meters) and 12% (95% CI: 6%–24%) at 900 meters into the forest. By 2019, those probabilities had declined to 30% (95% CI: 18%–44%) at the edge and 6% (95% CI: 3%–13%) deeper in the forest. This suggests a general decline in occupancy over time at both distances. Figure 1 illustrates a negative nonlinear relationship between distance from the forest edge and Swift Parrot occupancy—parrots are less likely to use boxes farther from the edge. A similar pattern was observed for common starlings, while tree martins showed the opposite trend, with occupancy increasing further into the forest. The decline in Swift Parrot use over time may be partly due to increased competition from starlings, which tend to occupy boxes more in later years. Additionally, the rise in tree martin occupancy deeper in the forest may explain the lower availability of boxes for Swift Parrots in those areas.</p>
 </section>
 </section>
 <section id="problem-4" class="level1">
